@@ -1,0 +1,3 @@
+# ai
+
+algorithms, basically
