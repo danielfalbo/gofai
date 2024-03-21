@@ -84,6 +84,7 @@ class TicTacToe(Game):
             for y in range(1, self.v + 1):
                 print(board.get((x, y), "."), end=" ")
             print()
+        print()
 
     def compute_utility(self, board, move, player):
         """If 'X' wins with this move, return 1; if 'O' wins return -1; else return 0."""
@@ -147,10 +148,19 @@ class TicTacToe(Game):
 
 
 if __name__ == "__main__":
+    print("X plays randomly")
+    print("O plays using minmax")
+    print()
     game = TicTacToe()
     state = game.initial
+    game.display(state)
     while not game.is_terminal(state):
-        state = game.result(state, game.minMax(state))
+        move = (
+            random.choice(game.actions(state))
+            if state.to_move == "X"
+            else game.minMax(state)
+        )
+        state = game.result(state, move)
         game.display(state)
-        print("")
-    print(game.utility(state, "X"))
+    utility = game.utility(state, "X")
+    print("X wins" if utility > 0 else "AI wins" if utility < 0 else "Tie")
