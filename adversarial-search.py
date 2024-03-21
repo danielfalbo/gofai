@@ -5,6 +5,9 @@ import numpy as np
 from collections import namedtuple
 
 
+GameState = namedtuple("GameState", ["to_move", "utility", "board", "moves"])
+
+
 class Game:
     def __init__(self, initial_state):
         self.initial = initial_state
@@ -19,23 +22,20 @@ class Game:
                 state = self.result(state, move)
                 self.display(state)
 
-    def actions(self, state):
+    def actions(self, state: GameState):
         raise NotImplementedError
 
-    def result(self, state, move):
+    def result(self, state: GameState, move):
         raise NotImplementedError
 
-    def utility(self, state, player):
+    def utility(self, state: GameState, player):
         raise NotImplementedError
 
-    def is_terminal(self, state):
+    def is_terminal(self, state: GameState):
         return NotImplementedError
 
-    def display(self, state):
+    def display(self, state: GameState):
         return NotImplementedError
-
-
-GameState = namedtuple("GameState", ["to_move", "utility", "board", "moves"])
 
 
 class TicTacToe(Game):
@@ -113,9 +113,11 @@ class TicTacToe(Game):
         return n >= self.k
 
 
-"""# MinMax Seach
+ttt_game = TicTacToe()
+[print(row) for row in ttt_game.initial.moves]
 
-# AlphaBeta Pruning Hybrid
+# MinMax
+
+# Hybrid AlphaBeta Pruning
 
 # AlphaBeta Pruning
-"""
