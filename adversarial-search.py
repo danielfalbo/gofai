@@ -9,7 +9,7 @@ GameState = namedtuple("GameState", ["to_move", "utility", "board", "moves"])
 
 
 class Game:
-    def __init__(self, initial_state):
+    def __init__(self, initial_state: GameState):
         self.initial = initial_state
 
     def play(self, players):
@@ -112,12 +112,45 @@ class TicTacToe(Game):
         n -= 1  # Because we counted move itself twice
         return n >= self.k
 
+    def _minmax_val(self, state: GameState):
+        player = state.to_move
+        if self.is_terminal(state):
+            return self.utility(state, "X")
 
-ttt_game = TicTacToe()
-[print(row) for row in ttt_game.initial.moves]
+        v = float("-inf") if player == "X" else float("+inf")
+        best = max if player == "X" else min
+        opp_player = "O" if player == "X" else "X"
 
-# MinMax
+        for move in self.actions(state):
+            new_state = self.result(state, move)
+            v = best(v, self._minmax_val(new_state))
 
-# Hybrid AlphaBeta Pruning
+        return v
 
-# AlphaBeta Pruning
+    def minMax(self, state: GameState):
+        """returns a move"""
+        assert not self.is_terminal(state)
+        child_nodes = self.actions(state)
+        worse_outcomes = [
+            (move, self._minmax_val(self.result(state, move))) for move in child_nodes
+        ]
+        best = max if state.to_move == "X" else min
+        return best(worse_outcomes, key=lambda move_val_pair: move_val_pair[1])[0]
+
+    def hybridAlphaBetaPruning(self, state: GameState):
+        """returns a move"""
+        raise NotImplementedError
+
+    def alphaBetaPruning(self, state: GameState):
+        """returns a move"""
+        raise NotImplementedError
+
+
+if __name__ == "__main__":
+    game = TicTacToe()
+    state = game.initial
+    while not game.is_terminal(state):
+        state = game.result(state, game.minMax(state))
+        game.display(state)
+        print("")
+    print(game.utility(state, "X"))
