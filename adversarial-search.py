@@ -120,7 +120,6 @@ class TicTacToe(Game):
 
         v = float("-inf") if player == "X" else float("+inf")
         best = max if player == "X" else min
-        opp_player = "O" if player == "X" else "X"
 
         for move in self.actions(state):
             new_state = self.result(state, move)
