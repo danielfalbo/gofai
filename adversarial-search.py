@@ -138,14 +138,6 @@ class TicTacToe(Game):
         best = max if state.to_move == "X" else min
         return best(worse_outcomes, key=lambda move_val_pair: move_val_pair[1])[0]
 
-    def hybridAlphaBetaPruning(self, state: GameState):
-        """returns a move"""
-        raise NotImplementedError
-
-    def alphaBetaPruning(self, state: GameState):
-        """returns a move"""
-        raise NotImplementedError
-
 
 if __name__ == "__main__":
     print("X plays randomly")
