@@ -131,11 +131,10 @@ class TicTacToe(Game):
         """returns a move"""
         assert not self.is_terminal(state)
         child_nodes = self.actions(state)
-        worse_outcomes = [
-            (move, self._minmax_val(self.result(state, move))) for move in child_nodes
-        ]
         best = max if state.to_move == "X" else min
-        return best(worse_outcomes, key=lambda move_val_pair: move_val_pair[1])[0]
+        return best(
+            child_nodes, key=lambda move: self._minmax_val(self.result(state, move))
+        )
 
 
 if __name__ == "__main__":
