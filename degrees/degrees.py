@@ -1,5 +1,6 @@
 import csv
 import sys
+from collections import deque
 
 # Maps names to a set of corresponding person_ids
 names = {}
@@ -9,7 +10,6 @@ people = {}
 
 # Maps movie_ids to a dictionary of: title, year, stars (a set of person_ids)
 movies = {}
-
 
 def load_data(directory):
     """
@@ -90,33 +90,31 @@ def shortest_path(source, target):
     """
 
     fifo_set = set({source})
-    fifo = [(source, None, None)]
+    fifo = deque([(source, None, None)])
 
     # map from actor id to (movie_id, parent_id)
     visited = {}
 
     while len(fifo) > 0:
-        curr_id, movie_id, parent_id = fifo.pop(0)
+        curr_id, movie_id, parent_id = fifo.popleft()
 
         visited[curr_id] = (movie_id, parent_id)
 
+        for movie_id, star_id in neighbors_for_person(curr_id):
+            if star_id in visited or star_id in fifo_set:
+                continue
 
-        for movie_id in people[curr_id]['movies']:
-            for star_id in movies[movie_id]['stars']:
-                if star_id in visited or star_id in fifo_set:
-                    continue
+            if star_id == target:
+                path = [(movie_id, star_id)]
+                while curr_id != source:
+                    movie_id, parent_id = visited[curr_id]
+                    path.append((movie_id, curr_id))
+                    curr_id = parent_id
+                return list(reversed(path))
 
-                if star_id == target:
-                    path = [(movie_id, star_id)]
-                    while curr_id != source:
-                        movie_id, parent_id = visited[curr_id]
-                        path.append((movie_id, curr_id))
-                        curr_id = parent_id
-                    return list(reversed(path))
-
-                if star_id not in fifo_set:
-                    fifo.append((star_id, movie_id, curr_id))
-                    fifo_set.add(star_id)
+            if star_id not in fifo_set:
+                fifo.append((star_id, movie_id, curr_id))
+                fifo_set.add(star_id)
 
     return None
 
@@ -147,7 +145,6 @@ def person_id_for_name(name):
     else:
         return person_ids[0]
 
-
 def neighbors_for_person(person_id):
     """
     Returns (movie_id, person_id) pairs for people
@@ -156,8 +153,8 @@ def neighbors_for_person(person_id):
     movie_ids = people[person_id]["movies"]
     neighbors = set()
     for movie_id in movie_ids:
-        for person_id in movies[movie_id]["stars"]:
-            neighbors.add((movie_id, person_id))
+        for star_id in movies[movie_id]["stars"]:
+            neighbors.add((movie_id, star_id))
     return neighbors
 
 
