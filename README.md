@@ -3,3 +3,4 @@
 ## resources
 
 - Harvard CS50 AI
+- AIMA
