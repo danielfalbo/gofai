@@ -132,9 +132,8 @@ def shortest_path(source, target):
                 return list(reversed(path))
 
             # Else, we add them to the deque for later exploration.
-            if star_id not in fifo_set:
-                fifo.append((star_id, movie_id, curr_id))
-                fifo_set.add(star_id)
+            fifo.append((star_id, movie_id, curr_id))
+            fifo_set.add(star_id)
 
     return None
 
