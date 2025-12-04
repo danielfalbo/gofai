@@ -1,4 +1,5 @@
 # >_ uv run --with check50 check50 --local ai50/projects/2024/x/degrees
+# >_ uv run --with style50 style50 degrees.py
 
 import csv
 import sys
@@ -12,6 +13,7 @@ people = {}
 
 # Maps movie_ids to a dictionary of: title, year, stars (a set of person_ids)
 movies = {}
+
 
 def load_data(directory):
     """
@@ -51,6 +53,7 @@ def load_data(directory):
             except KeyError:
                 pass
 
+
 def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
@@ -82,6 +85,7 @@ def main():
             movie = movies[path[i + 1][0]]["title"]
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
+
 def shortest_path(source, target):
     """
     Returns the shortest list of (movie_id, person_id) pairs
@@ -89,23 +93,36 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    if source == target: return []
 
-    fifo_set = set({source})
+    # Actors' distance to themselves is 0.
+    if source == target:
+        return []
+
+    # Doubly linked list for efficient FIFO push/pop operations.
     fifo = deque([(source, None, None)])
+    # Set for efficient frontier membership lookup.
+    fifo_set = set({source})
 
-    # map from actor id to (movie_id, parent_id)
+    # Map from actor id to (movie_id, parent_id).
     visited = {}
 
     while len(fifo) > 0:
+        # Pop new connection to explore from deque.
         curr_id, connection_movie_id, parent_id = fifo.popleft()
 
+        # Save the movie and connection that led us here.
         visited[curr_id] = (connection_movie_id, parent_id)
 
+        # Push this person's neighbors to the deque for later exploration.
         for movie_id, star_id in neighbors_for_person(curr_id):
+
+            # No need to push neighbors already explored in the past
+            # or already present in the deque.
             if star_id in visited or star_id in fifo_set:
                 continue
 
+            # If one of the neighbors is the target, we can reconstruct
+            # the path from source to this and call it a day.
             if star_id == target:
                 path = [(movie_id, star_id)]
                 while curr_id != source:
@@ -114,11 +131,13 @@ def shortest_path(source, target):
                     curr_id = parent_id
                 return list(reversed(path))
 
+            # Else, we add them to the deque for later exploration.
             if star_id not in fifo_set:
                 fifo.append((star_id, movie_id, curr_id))
                 fifo_set.add(star_id)
 
     return None
+
 
 def person_id_for_name(name):
     """
@@ -145,6 +164,7 @@ def person_id_for_name(name):
     else:
         return person_ids[0]
 
+
 def neighbors_for_person(person_id):
     """
     Returns (movie_id, person_id) pairs for people
@@ -156,6 +176,7 @@ def neighbors_for_person(person_id):
         for star_id in movies[movie_id]["stars"]:
             neighbors.add((movie_id, star_id))
     return neighbors
+
 
 if __name__ == "__main__":
     main()
