@@ -1,3 +1,5 @@
 # ai
 
-algorithms, basically
+## resources
+
+- Harvard CS50 AI
