@@ -1,3 +1,5 @@
+# >_ uv run --with check50 check50 --local ai50/projects/2024/x/degrees
+
 import csv
 import sys
 from collections import deque
