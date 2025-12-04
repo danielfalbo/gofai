@@ -49,7 +49,6 @@ def load_data(directory):
             except KeyError:
                 pass
 
-
 def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
@@ -88,6 +87,7 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    if source == target: return []
 
     fifo_set = set({source})
     fifo = deque([(source, None, None)])
@@ -96,9 +96,9 @@ def shortest_path(source, target):
     visited = {}
 
     while len(fifo) > 0:
-        curr_id, movie_id, parent_id = fifo.popleft()
+        curr_id, connection_movie_id, parent_id = fifo.popleft()
 
-        visited[curr_id] = (movie_id, parent_id)
+        visited[curr_id] = (connection_movie_id, parent_id)
 
         for movie_id, star_id in neighbors_for_person(curr_id):
             if star_id in visited or star_id in fifo_set:
@@ -107,8 +107,8 @@ def shortest_path(source, target):
             if star_id == target:
                 path = [(movie_id, star_id)]
                 while curr_id != source:
-                    movie_id, parent_id = visited[curr_id]
-                    path.append((movie_id, curr_id))
+                    prev_movie_id, parent_id = visited[curr_id]
+                    path.append((prev_movie_id, curr_id))
                     curr_id = parent_id
                 return list(reversed(path))
 
@@ -117,8 +117,6 @@ def shortest_path(source, target):
                 fifo_set.add(star_id)
 
     return None
-
-
 
 def person_id_for_name(name):
     """
@@ -156,7 +154,6 @@ def neighbors_for_person(person_id):
         for star_id in movies[movie_id]["stars"]:
             neighbors.add((movie_id, star_id))
     return neighbors
-
 
 if __name__ == "__main__":
     main()
