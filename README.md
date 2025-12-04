@@ -1,4 +1,4 @@
-# ai
+# [GOFAI](https://en.wikipedia.org/wiki/GOFAI)
 
 ## resources
 
