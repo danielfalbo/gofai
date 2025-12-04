@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# >_ uv run --with numpy adversarial-search.py
+
 import random
 import numpy as np
 from collections import namedtuple
