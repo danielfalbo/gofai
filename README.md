@@ -3,4 +3,5 @@
 ## resources
 
 - Harvard CS50 AI
+- Harvard CS50 Fundamentals of AI
 - AIMA
